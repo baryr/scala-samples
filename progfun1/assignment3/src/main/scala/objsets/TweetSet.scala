@@ -179,7 +179,14 @@ class NonEmpty(val elem: Tweet, val left: TweetSet, val right: TweetSet) extends
     inclIter(this, tweetSetsToTweets(List(that), List()))
   }
 
-  def mostRetweeted: Tweet = { 
+  def mostRetweeted: Tweet = {
+    /*
+    This one should be better
+    val moreRetweetsOnLeftBranch = left.filter(t =>  t.retweets > elem.retweets)
+    val moreRetweetsOnRightBranch = right.filter(t =>  t.retweets > elem.retweets)
+    val moreRetweets = moreRetweetsOnLeftBranch union moreRetweetsOnRightBranch
+    if (moreRetweets.isEmpty) elem else moreRetweets.mostRetweeted
+    */
     val childs = left union right;
     val moreRetweeted = childs.filter(t => t.retweets > elem.retweets)
     if (moreRetweeted.isEmpty) elem else childs.mostRetweeted
