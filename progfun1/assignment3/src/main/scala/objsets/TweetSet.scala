@@ -1,6 +1,6 @@
 package objsets
 
-import TweetReader._
+import scala.annotation.tailrec
 
 /**
  * A class to represent tweets.
@@ -8,7 +8,7 @@ import TweetReader._
 class Tweet(val user: String, val text: String, val retweets: Int) {
   override def toString: String =
     "User: " + user + "\n" +
-      "Text: " + text + " [" + retweets + "]"
+    "Text: " + text + " [" + retweets + "]"
 }
 
 /**
@@ -137,9 +137,12 @@ class Empty extends TweetSet {
   def foreach(f: Tweet => Unit): Unit = ()
   
   def isEmpty: Boolean = true
+
+  override def toString = "."
+
 }
 
-class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
+class NonEmpty(val elem: Tweet, val left: TweetSet, val right: TweetSet) extends TweetSet {
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
     val leftAcc = left.filterAcc(p, acc)
@@ -149,9 +152,33 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
   
   //def union(that: TweetSet): TweetSet = (that union (left union right)) incl(elem)
-  def union(that: TweetSet): TweetSet = right.union(left.union(that.incl(elem)))
-  
-  
+  //def union(that: TweetSet): TweetSet = right.union(left.union(that.incl(elem)))
+  def union(that: TweetSet): TweetSet = {
+
+    @tailrec
+    def tweetSetsToTweets(tweetSets: List[TweetSet], tweets: List[Tweet]): List[Tweet] = {
+      tweetSets match {
+        case head :: tail => {
+          head match {
+            case nonEmpty: NonEmpty => tweetSetsToTweets(nonEmpty.left :: nonEmpty.right :: tail, nonEmpty.elem :: tweets)
+            case _: Empty => tweetSetsToTweets(tail, tweets)
+          }
+        }
+        case List() => tweets
+      }
+    }
+
+    @tailrec
+    def inclIter(ts: TweetSet, tweets: List[Tweet]): TweetSet = {
+      tweets match {
+        case t :: tail => inclIter(ts.incl(t), tail)
+        case List() => ts
+      }
+    }
+
+    inclIter(this, tweetSetsToTweets(List(that), List()))
+  }
+
   def mostRetweeted: Tweet = { 
     val childs = left union right;
     val moreRetweeted = childs.filter(t => t.retweets > elem.retweets)
@@ -185,7 +212,10 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
   
   def isEmpty: Boolean = false
+
+  override def toString = "{" + left + "[" + elem.text + "]" + right + "}"
 }
+
 
 trait TweetList {
   def head: Tweet
@@ -207,6 +237,7 @@ object Nil extends TweetList {
 class Cons(val head: Tweet, val tail: TweetList) extends TweetList {
   def isEmpty = false
 }
+
 
 object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
