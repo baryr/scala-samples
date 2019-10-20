@@ -10,7 +10,7 @@ object Flatten  extends App {
     }
   }
 
-  val list: List[Any] = List(List(1, 1), 2, List(3, List(5, 8)))
+  val list = List(List(1, 1), 2, List(3, List(5, 8)))
 
   println(list)
   println(flatten(list))
