@@ -59,7 +59,7 @@ object ParallelCountChange {
       countChange(money, coins)
     } else {
       if (money > 0 && coins.nonEmpty) {
-        val (a, b) = common.parallel(countChange(money - coins.head, coins), countChange(money, coins.tail))
+        val (a, b) = common.parallel(parCountChange(money - coins.head, coins, threshold), parCountChange(money, coins.tail, threshold))
         a + b
       }
       else if (money == 0) 1 else 0
