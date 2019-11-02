@@ -44,7 +44,7 @@ object LineOfSight {
   }
 
   case class Node(left: Tree, right: Tree) extends Tree {
-    val maxPrevious = max(left.maxPrevious, right.maxPrevious)
+    val maxPrevious: Float = max(left.maxPrevious, right.maxPrevious)
   }
 
   case class Leaf(from: Int, until: Int, maxPrevious: Float) extends Tree
@@ -52,7 +52,7 @@ object LineOfSight {
   /** Traverses the specified part of the array and returns the maximum angle.
    */
   def upsweepSequential(input: Array[Float], from: Int, until: Int): Float = {
-    val angles = for (i <- input.indices) yield if (i == 0) 0 else input(i) / i
+    val angles = for (i <- input.indices if i < until) yield if (i == 0) 0 else input(i) / i
     angles.max
   }
 
