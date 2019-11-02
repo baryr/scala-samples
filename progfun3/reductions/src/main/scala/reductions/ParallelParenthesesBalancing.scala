@@ -61,7 +61,7 @@ object ParallelParenthesesBalancing {
 
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
-  def parBalance(chars: Array[Char], threshold: Int = 10): Boolean = {
+  def parBalance(chars: Array[Char], threshold: Int): Boolean = {
     val signs = chars.map({
       case '(' => 1
       case ')' => -1
@@ -91,7 +91,7 @@ object ParallelParenthesesBalancing {
         // (0, r1) (0, r2)
         val ((l1, r1), (l2, r2)) = common.parallel(reduce(from, from + half), reduce(from + half, until))
         if (l1 > r2) {
-          (l1 - r2 + l1, r1)
+          (l1 - r2 + l2, r1)
         } else {
           (l2, r2 - l1 + r1)
         }

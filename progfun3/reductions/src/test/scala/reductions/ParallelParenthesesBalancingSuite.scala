@@ -62,4 +62,10 @@ class ParallelParenthesesBalancingSuite extends FunSuite {
     check(").", false)
   }
 
+  test("parBalance should work for nested parentheses and threshold 1") {
+    def check(input: String, expected: Boolean):Unit = assert(parBalance(input.toArray, 1) == expected, s"parBalance($input) should be $expected")
+
+    check("((()))", true)
+  }
+
 }
